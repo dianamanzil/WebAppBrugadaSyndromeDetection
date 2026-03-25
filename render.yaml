@@ -3,7 +3,7 @@ services:
     name: WebAppBrugada
     env: python
     plan: free
-    pythonVersion: 3.10.13
+    pythonVersion: "3.10.13"
     buildCommand: |
       pip install --upgrade pip setuptools wheel
       pip install -r requirements.txt
