@@ -186,7 +186,11 @@ if st.button("🔍 Predict"):
     # =============================
     # MODEL PREDICTION
     # =============================
-    y_prob = float(model.predict(X)[0][0])
+    infer = model.signatures["serving_default"]
+    output = infer(tf.constant(X))
+
+ 
+    y_prob = float(list(output.values())[0].numpy()[0][0])
     y_pred = int(y_prob >= threshold)
 
     # =============================
