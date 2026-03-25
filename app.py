@@ -11,7 +11,7 @@ from scipy.signal import butter, filtfilt, find_peaks
 import tempfile              
 import shutil                
 import warnings            
-
+import zipfile
 
 # Optional (biar tampilan lebih clean)
 warnings.filterwarnings("ignore")
@@ -28,11 +28,24 @@ st.set_page_config(
 # =============================
 # LOAD MODEL
 # =============================
-@st.cache_resource
-def load_model():
-    return tf.keras.models.load_model("model_brugada_1dcnn.h5")
 
-model = load_model()
+@st.cache_resource
+def load_model_from_zip(zip_path="model_brugada_1dcnn_saved.zip"):
+    # Buat temporary folder
+    temp_dir = tempfile.mkdtemp()
+    
+    # Unzip model ke temp_dir
+    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+        zip_ref.extractall(temp_dir)
+    
+    # folder SavedModel biasanya ada di dalam temp_dir/model_brugada_1dcnn_saved/
+    saved_model_folder = temp_dir + "/model_brugada_1dcnn_saved"
+    
+    # Load model
+    model = tf.keras.models.load_model(saved_model_folder)
+    return model
+
+model = load_model_from_zip()
 
 # =============================
 # BANDPASS FILTER
