@@ -86,8 +86,9 @@ def preprocess_ecg(record_path):
     mean = np.mean(raw_matrix, axis=0)
     std = np.std(raw_matrix, axis=0)
     normalized = (raw_matrix - mean) / (std + 1e-8)
+    normalized = normalized.astype(np.float32)
 
-    return np.expand_dims(normalized, axis=0), rec
+    return np.expand_dims(normalized, axis=0).astype(np.float32), rec
 
 # =============================
 # ECG PLOT 3 DETIK, 4 LEAD
@@ -187,8 +188,7 @@ if st.button("🔍 Predict"):
     # MODEL PREDICTION
     # =============================
     infer = model.signatures["serving_default"]
-    output = infer(tf.constant(X))
-
+    output = infer(tf.constant(X, dtype=tf.float32))
  
     y_prob = float(list(output.values())[0].numpy()[0][0])
     y_pred = int(y_prob >= threshold)
